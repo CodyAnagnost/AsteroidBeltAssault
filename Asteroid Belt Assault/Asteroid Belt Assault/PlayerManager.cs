@@ -15,7 +15,7 @@ namespace Asteroid_Belt_Assault
         private Rectangle playerAreaLimit;
 
         public long PlayerScore = 0;
-        public int LivesRemaining = 3;
+        public int LivesRemaining = 5;
         public bool Destroyed = false;
 
         private Vector2 gunOffset = new Vector2(25, 10);
