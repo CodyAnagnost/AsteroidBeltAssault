@@ -279,6 +279,15 @@ namespace Asteroid_Belt_Assault
                 enemyManager.Draw(spriteBatch);
                 explosionManager.Draw(spriteBatch);
 
+                if (playerManager.ShieldsUp)
+                {
+                    spriteBatch.DrawString(
+                    pericles14,
+                    "Shields Activated",
+                    new Vector2(20, 40),
+                    Color.White);
+                }
+
                 spriteBatch.DrawString(
                     pericles14,
                     "Score: " + playerManager.PlayerScore.ToString(),

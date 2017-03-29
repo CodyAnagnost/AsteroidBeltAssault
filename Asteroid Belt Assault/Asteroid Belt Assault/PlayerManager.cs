@@ -10,6 +10,7 @@ namespace Asteroid_Belt_Assault
 {
     class PlayerManager
     {
+        public Sprite powerUp;
         public Sprite playerSprite;
         private float playerSpeed = 160.0f;
         private Rectangle playerAreaLimit;
@@ -20,9 +21,15 @@ namespace Asteroid_Belt_Assault
 
         private Vector2 gunOffset = new Vector2(25, 10);
         private float shotTimer = 0.0f;
-        private float minShotTimer = 0.2f;
-        private int playerRadius = 15;
+        private float minShotTimer = 0.1f;
+        public int playerRadius = 15;
         public ShotManager PlayerShotManager;
+
+        public double shieldTimer = 0;
+        public double shieldTimerMax = 10.0;   // Max shield time is 10 seconds
+        private Random rand = new Random(System.Environment.TickCount);
+
+        public bool ShieldsUp = false;
 
         public PlayerManager(
             Texture2D texture,  
@@ -35,6 +42,12 @@ namespace Asteroid_Belt_Assault
                 texture,
                 initialFrame,
                 Vector2.Zero);
+
+            powerUp = new Sprite(
+                new Vector2(400, 0),
+                texture,
+                new Rectangle(0,0,64,64),
+                new Vector2(0, 40));
 
             PlayerShotManager = new ShotManager(
                 texture,
@@ -142,9 +155,21 @@ namespace Asteroid_Belt_Assault
         public void Update(GameTime gameTime)
         {
             PlayerShotManager.Update(gameTime);
+            powerUp.Update(gameTime);
 
             if (!Destroyed)
             {
+                if (ShieldsUp)
+                {
+                    shieldTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+                    if (shieldTimer >= 10)
+                    {
+                        ShieldsUp = false;
+                        playerSprite.CollisionRadius = playerRadius;
+                        shieldTimer = 0;
+                    }
+                }
                 playerSprite.Velocity = Vector2.Zero;
 
                 shotTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -156,6 +181,14 @@ namespace Asteroid_Belt_Assault
                 playerSprite.Velocity *= playerSpeed;
 
                 playerSprite.Update(gameTime);
+
+                if (playerSprite.IsBoxColliding(powerUp.BoundingBoxRect))
+                {
+                    ShieldsUp = true;
+                    playerSprite.CollisionRadius = playerRadius * 3;
+                    powerUp.Location = new Vector2(rand.Next(40, 720), -400);
+                }
+
                 imposeMovementLimits();
             }
         }
@@ -163,6 +196,7 @@ namespace Asteroid_Belt_Assault
         public void Draw(SpriteBatch spriteBatch)
         {
             PlayerShotManager.Draw(spriteBatch);
+            powerUp.Draw(spriteBatch);
 
             if (!Destroyed)
             {

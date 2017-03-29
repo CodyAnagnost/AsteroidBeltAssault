@@ -76,10 +76,18 @@ namespace Asteroid_Belt_Assault
                     playerManager.playerSprite.CollisionRadius))
                 {
                     shot.Location = offScreen;
-                    playerManager.Destroyed = true;
-                    explosionManager.AddExplosion(
-                        playerManager.playerSprite.Center,
-                        Vector2.Zero);
+                    if (playerManager.ShieldsUp != true)
+                        playerManager.Destroyed = true;
+
+                    if (playerManager.ShieldsUp)
+                        explosionManager.AddExplosion(
+                            shot.Center,
+                            Vector2.Zero);
+                    else
+                        explosionManager.AddExplosion(
+                            playerManager.playerSprite.Center,
+                            Vector2.Zero);
+
                 }
             }
         }
@@ -97,11 +105,14 @@ namespace Asteroid_Belt_Assault
                         enemy.EnemySprite.Center,
                         enemy.EnemySprite.Velocity / 10);
 
-                    playerManager.Destroyed = true;
+                    if (playerManager.ShieldsUp != true)
+                    {
+                        playerManager.Destroyed = true;
 
-                    explosionManager.AddExplosion(
-                        playerManager.playerSprite.Center,
-                        Vector2.Zero);
+                        explosionManager.AddExplosion(
+                            playerManager.playerSprite.Center,
+                            Vector2.Zero);
+                    }
                 }
             }
         }
@@ -116,14 +127,25 @@ namespace Asteroid_Belt_Assault
                 {
                     explosionManager.AddExplosion(
                         asteroid.Center,
-                        asteroid.Velocity / 10);
+                        asteroid.Velocity / 10);                    
 
-                    asteroid.Location = offScreen;
+                    if (!playerManager.ShieldsUp)
+                    {
+                        playerManager.Destroyed = true;
+                        asteroid.Location = offScreen;
 
-                    playerManager.Destroyed = true;
-                    explosionManager.AddExplosion(
-                        playerManager.playerSprite.Center,
-                        Vector2.Zero);
+                        explosionManager.AddExplosion(
+                            playerManager.playerSprite.Center,
+                            Vector2.Zero);
+                    }
+                    else
+                    {
+                        Vector2 vel = asteroid.Location - playerManager.playerSprite.Location;
+                        vel.Normalize();
+                        vel *= asteroid.Velocity.Length();
+
+                        asteroid.Velocity = vel;
+                    }
                 }
             }
         }
