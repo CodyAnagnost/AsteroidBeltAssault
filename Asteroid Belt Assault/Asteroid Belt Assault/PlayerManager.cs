@@ -46,7 +46,7 @@ namespace Asteroid_Belt_Assault
             powerUp = new Sprite(
                 new Vector2(400, 0),
                 texture,
-                new Rectangle(0,0,64,64),
+                new Rectangle(202,54,286,106 ),
                 new Vector2(0, 40));
 
             PlayerShotManager = new ShotManager(
